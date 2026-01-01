@@ -1,0 +1,18 @@
+# Core LangChain libraries
+langchain
+langchain-core
+langchain-community
+# langchain-openai # 如果完全不用OpenAI，可以移除这个，但建议保留以防万一
+langchain-huggingface
+
+# Zhipu AI Support
+zhipuai
+
+# Vector Store
+faiss-cpu
+
+# Embedding Model (保持本地 m3e 不变，既快又省钱)
+sentence-transformers
+
+# Environment variable management
+python-dotenv
