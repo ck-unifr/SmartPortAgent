@@ -3,7 +3,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)
 ![LangChain](https://img.shields.io/badge/LangChain-v0.1-green?logo=chainlink)
-![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4-orange?logo=openai)
+![ZhipuAI](https://img.shields.io/badge/ZhipuAI-GLM--4-blueviolet)
 ![RAG](https://img.shields.io/badge/RAG-Enabled-purple)
 ![License](https://img.shields.io/badge/License-MIT-grey)
 
