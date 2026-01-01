@@ -15,7 +15,7 @@ MOCK_API_DATA_PATH = DATA_DIR / "mock_api_data.json"
 
 # --- RAG / Embedding 配置 ---
 # 本地 Embedding 模型 (通用)
-EMBEDDING_MODEL_NAME = "m3e-base"
+EMBEDDING_MODEL_NAME = BASE_DIR / "model" / "m3e-base"
 
 
 # =======================================================
