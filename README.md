@@ -54,6 +54,9 @@ SmartPortAgent/
 ├── script/                                   # [新增] 运维与辅助脚本
 │   └── download_sentence_embedding_model.py  # 模型下载脚本 (对应刚才优化的代码)
 ├── src/                                      # 核心代码层
+|   ├── web/                                  # [Web] 前端界面模块
+│   │   ├── app.py                            # Streamlit 入口
+│   │   └── sidebar.py                        # 侧边栏组件
 │   ├── agent/                                # Agent 构建与 Prompt 定义
 │   ├── config/                               # 全局配置 (环境、路径)
 │   ├── rag/                                  # RAG 检索器工厂
@@ -98,12 +101,28 @@ ZHIPU_API_KEY="your_api_key_here"
 DASHSCOPE_API_KEY="your_api_key_here"
 ```
 
-### 4. 运行 Demo
+### 4. 下载 Embedding 模型 (必须)
+为了保证 RAG 功能正常，需下载本地向量模型（支持断点续传）：
 ```bash
-python main_cli.py
+uv run script/download_sentence_embedding_model.py
 ```
 
-### 5. 安装与运行 (使用 uv)
+### 5. 运行 Demo
+
+#### 方式 A: 🖥️ 启动 Web 可视化界面 (推荐)
+启动类似 ChatGPT 的网页版助手：
+```bash
+uv run streamlit run src/web/app.py
+```
+> 启动后浏览器会自动打开 `http://localhost:8501`。
+
+#### 方式 B: 📟 启动命令行模式 (CLI)
+适合开发调试：
+```bash
+uv run main_cli.py
+```
+
+#### 安装与运行 (使用 uv)
 
 确保你已安装 uv。如果没有，请先运行：
 `curl -LsSf https://astral.sh/uv/install.sh | sh` (macOS/Linux) 或参考官方文档。
@@ -129,17 +148,18 @@ uv run main_cli.py
 **Agent 输出预览:**
 > **智能诊断报告**
 >
-> 1.  **状态诊断**:
+> 1.  **🔍 状态核查**:
 >     *   集装箱：已进港 (宁波北仑三期)
 >     *   报关状态：**查验 (代码 H98)**
 >     *   船期：明日 14:00 截关 (风险极高)
 >
-> 2.  **智能分析**:
+> 2.  **🧠 智能诊断**:
 >     *   根据知识库，H98 指令通常代表机检。如果机检图像正常，4-6 小时可放行；若转人工查验需 1-2 工作日。
 >
-> 3.  **行动建议**:
+> 3.  **💡 行动建议**:
 >     *   立即联系报关行确认是否收到移箱通知。
 >     *   鉴于离截关不足 24 小时，建议立即申请“预漏装”以保留下一水船期舱位。
+
 
 ## ⚠️ 免责声明
 
