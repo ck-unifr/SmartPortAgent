@@ -1,81 +1,217 @@
+```markdown
 <div align="center">
-  <!-- 建议：找一个免费的 AI 生成一个集装箱/港口的卡通 Logo 替换下面的 emoji -->
-  <a href="https://github.com/YourUsername/SmartPortAgent">
-    <h1>🚢 SmartPortAgent</h1>
-  </a>
 
-  <p>
-    <strong>智能口岸通关异常诊断助手</strong> <br>
-    <i>基于 LLM Agent + RAG 的外贸物流“专家级” copilot</i>
-  </p>
+# 🚢 SmartPortAgent | 智能口岸通关异常诊断助手
 
-  <p>
-    <a href="./README_EN.md">English</a> •
-    <a href="#-快速开始">快速开始</a> •
-    <a href="#-技术架构">技术架构</a> •
-    <a href="#-功能演示">功能演示</a>
-  </p>
+<!-- 这里建议放一张项目的 Logo 或 Banner 图片 -->
+<!-- <img src="docs/logo.png" width="200" /> -->
 
-  <!-- 徽章区域 -->
-  <p>
-    <a href="https://www.python.org/">
-      <img src="https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white" alt="Python">
-    </a>
-    <a href="https://github.com/astral-sh/uv">
-      <img src="https://img.shields.io/badge/uv-fastest-purple?logo=python" alt="uv">
-    </a>
-    <a href="https://python.langchain.com/">
-      <img src="https://img.shields.io/badge/LangChain-v0.1-green?logo=chainlink" alt="LangChain">
-    </a>
-    <br>
-    <img src="https://img.shields.io/badge/ZhipuAI-GLM--4-blueviolet" alt="ZhipuAI">
-    <img src="https://img.shields.io/badge/Qwen-Turbo%2FMax-ff6a00?logo=alibabacloud&logoColor=white" alt="Qwen">
-    <img src="https://img.shields.io/badge/RAG-Enabled-purple" alt="RAG">
-    <img src="https://img.shields.io/badge/License-MIT-grey" alt="License">
-  </p>
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)](https://www.python.org/)
+[![uv](https://img.shields.io/badge/uv-fastest-purple?logo=python)](https://github.com/astral-sh/uv)
+[![LangChain](https://img.shields.io/badge/LangChain-v0.1-green?logo=chainlink)](https://www.langchain.com/)
+[![License](https://img.shields.io/badge/License-MIT-grey)](LICENSE)
 
-  <!-- 演示 GIF (关键！如果没有，请去录制一个 Streamlit 的操作屏录) -->
-  <img src="https://via.placeholder.com/800x450.png?text=Place+Your+Demo+GIF+Here" alt="Demo GIF" width="800">
+[![ZhipuAI](https://img.shields.io/badge/ZhipuAI-GLM--4-blueviolet)](https://open.bigmodel.cn/)
+[![Qwen](https://img.shields.io/badge/Qwen-Turbo%2FMax-ff6a00?logo=alibabacloud&logoColor=white)](https://help.aliyun.com/zh/model-studio/)
+[![RAG Enabled](https://img.shields.io/badge/RAG-Enabled-purple)]()
+
+**基于 LLM Agent 和 RAG 技术的智慧口岸业务模拟系统**
+
+[快速开始](#-快速开始) • [功能特性](#-核心特性) • [技术架构](#-技术架构) • [演示截图](#-演示截图)
 
 </div>
 
 ---
 
-## 📖 简介
+## 📖 项目简介
 
-**SmartPortAgent** 是一个专为外贸与物流行业设计的 **AI 智能体 (Agent)** Demo。
+**SmartPortAgent** 旨在解决外贸人员在货物出口过程中遇到的“数据碎片化”和“异常状态难解读”痛点。
 
-它模拟了真实的**智慧口岸**场景，旨在解决外贸人员在货物出口过程中遇到的“数据碎片化”和“异常状态难解读”痛点。通过自然语言对话，Agent 能够自动调度工具查询集装箱、报关和船期状态，并结合内置的**RAG 法律法规知识库**，像一位资深关务专家一样为你诊断异常并提供行动建议。
+通过自然语言对话，Agent 能够自动编排任务，查询集装箱、报关和船期状态，并结合内置的**海关法规知识库**诊断异常（如海关查验），提供专业的行动建议。用户只需提供箱号，即可完成 **“查询-诊断-建议”** 的全流程。
 
-> **🌟 核心价值**: 输入一个箱号，AI 自动完成 `查询` -> `分析` -> `诊断` -> `建议` 全流程。
+### 🎯 解决什么问题？
+- ❌ **信息分散**：不再需要分别登录码头、海关、船公司网站。
+- ❌ **状态晦涩**：自动解读 “H98 查验” 等专业代码含义。
+- ❌ **决策困难**：基于截关时间（CVT）计算赶船风险，提供决策辅助。
+
+---
+
+## 📸 演示截图
+
+> **(建议此处替换为实际的 GIF 动图或 Web 界面截图，展示 Streamlit 界面和对话过程)**
+> ![Demo Placeholder](https://via.placeholder.com/800x400?text=Please+Upload+Your+Demo+Screenshot+Here)
+
+---
 
 ## ✨ 核心特性
 
-- **🤖 智能任务规划 (Agent)**: 基于 **LangChain ReAct** 模式，AI 自动思考并并行调用多个模拟 API（如：查询海关状态、查询码头进港信息）。
-- **📚 专家级知识库 (RAG)**: 内置宁波口岸查验流程与监管政策，利用 **FAISS + m3e-base** 向量检索，准确解读 "H98"、"查验" 等晦涩术语。
-- **🔌 全链路模拟环境**: 包含集装箱生命周期、海关放行状态、船舶截关时间 (CVT) 的完整模拟数据，开箱即用。
-- **💡 智能决策风控**: 综合船期截关时间与当前查验进度，自动计算赶船风险，给出“申请预漏装”或“改配”等专业建议。
+- **🤖 智能任务规划 (Agent)**: 基于 LangChain ReAct 模式，自动分解用户意图并调用模拟 API 工具。
+- **📚 专家知识库 (RAG)**: 内置宁波口岸查验流程与监管政策，利用 FAISS + m3e-base 实现本地化高精检索。
+- **🔌 全链路模拟**: 包含集装箱进港、报关放行、船舶截关时间等完整的模拟业务数据。
+- **💡 智能风控**: 综合船期与查验进度，自动计算风险等级并给出“预漏装”等专业建议。
 
-## 🏗️ 技术架构
+---
+
+## 🛠 技术架构
 
 ```mermaid
 graph TD
-    User[👤 用户] -->|自然语言提问| Web[🖥️ Streamlit UI]
-    Web --> Agent[🤖 LangChain Agent]
+    User[用户指令] --> WebUI[Streamlit Web 界面]
+    WebUI --> Agent[SmartPort Agent (LangChain)]
     
-    subgraph "Core Brain (核心大脑)"
-        Agent <-->|推理/规划| LLM[🧠 ZhipuAI/Qwen LLM]
-        Agent <-->|工具调用| Tools[🛠️ 工具集合]
+    subgraph "核心逻辑层"
+        Agent -->|意图识别| Planner[任务规划器]
+        Planner -->|需要数据| Tools[工具集 Port Tools]
+        Planner -->|需要知识| RAG[RAG 检索系统]
     end
     
-    subgraph "RAG System (知识增强)"
-        Tools -->|检索法规| VectorDB[(🗄️ FAISS 向量库)]
-        VectorDB <-->|Embedding| EmbedModel[📉 m3e-base 本地模型]
-        VectorDB <-->|加载| KB[📄 知识库 TXT]
+    subgraph "数据与知识层"
+        Tools --> MockAPI[(模拟业务数据库)]
+        RAG --> VectorDB[(FAISS 向量库)]
+        VectorDB -.->|Embedding| Model[m3e-base 本地模型]
     end
     
-    subgraph "Mock Infrastructure (模拟设施)"
-        Tools -->|API请求| MockData[💾 模拟业务数据 (JSON)]
+    subgraph "大模型服务"
+        Agent <-->|推理/生成| LLM[ZhipuGLM / Qwen]
     end
+    
+    Agent -->|最终回复| WebUI
+```
 
-    Agent -->|最终回复| Web
+**技术栈详情：**
+- **开发语言**: Python 3.10+
+- **依赖管理**: `uv` (极速包管理)
+- **LLM 框架**: LangChain v0.1
+- **向量检索**: FAISS (CPU) + HuggingFace (m3e-base)
+- **前端界面**: Streamlit
+
+---
+
+## 📂 项目结构
+
+```text
+SmartPortAgent/
+├── .venv/                   # [自动生成] 虚拟环境
+├── data/
+│   ├── vector_store_index/  # FAISS 向量索引文件
+│   ├── knowledge_base.txt   # RAG 知识库源文件 (口岸政策/SOP)
+│   └── mock_api_data.json   # 模拟 API 业务数据
+├── model/                   # 本地 Embedding 模型目录
+├── script/                  # 运维脚本 (构建索引/下载模型)
+├── src/
+│   ├── agent/               # Agent 核心逻辑 (ReAct)
+│   ├── rag/                 # RAG 检索模块
+│   ├── tools/               # 模拟 API 工具函数
+│   └── web/                 # Streamlit 前端界面
+├── .env.example             # 环境变量模版
+├── main_cli.py              # 命令行启动入口
+├── pyproject.toml           # 依赖配置
+└── uv.lock                  # 版本锁定文件
+```
+
+---
+
+## 🚀 快速开始
+
+本项目强烈推荐使用 **[uv](https://github.com/astral-sh/uv)** 进行环境管理，体验极致速度。
+
+### 1. 环境准备与依赖安装
+
+确保已安装 `uv` (如未安装：`curl -LsSf https://astral.sh/uv/install.sh | sh`)。
+
+```bash
+# 克隆项目
+git clone https://github.com/YourUsername/SmartPortAgent.git
+cd SmartPortAgent
+
+# 初始化环境并同步依赖 (自动下载 Python 3.11)
+uv sync
+```
+
+<details>
+<summary><b>点击展开：使用传统的 pip/venv 安装</b></summary>
+
+```bash
+python -m venv venv
+# Windows
+venv\Scripts\activate
+# Mac/Linux
+source venv/bin/activate
+
+pip install -r requirements.txt
+```
+</details>
+
+### 2. 配置密钥
+
+复制配置文件并填入你的 API Key（智谱 GLM 或 阿里 Qwen）：
+
+```bash
+cp .env.example .env
+```
+编辑 `.env` 文件：
+```ini
+ZHIPU_API_KEY="your_zhipu_api_key"
+DASHSCOPE_API_KEY="your_qwen_api_key"
+```
+
+### 3. 下载模型与构建索引 (重要)
+
+为保证数据隐私与速度，本项目使用本地 Embedding 模型。
+
+```bash
+# 下载 m3e-base 模型 (支持断点续传，已配置国内镜像)
+uv run script/download_sentence_embedding_model.py
+
+# (可选) 如果修改了 data/knowledge_base.txt，需重新构建索引
+# uv run script/build_vector_store.py
+```
+
+### 4. 启动应用
+
+**方式 A: Web 可视化界面 (推荐)**
+```bash
+uv run streamlit run src/web/app.py
+```
+> 浏览器将自动打开 http://localhost:8501
+
+**方式 B: 命令行模式 (调试用)**
+```bash
+uv run main_cli.py
+```
+
+---
+
+## 💬 使用示例
+
+启动后，尝试发送以下指令：
+
+> "帮我查一下集装箱 **NBCT1234567**，提单号是 **BILL002**，这票货明天能赶上‘中远海运金牛座’这艘船吗？现在一直没显示放行，我很急。"
+
+**Agent 输出预览：**
+
+| 模块 | 内容详情 |
+| :--- | :--- |
+| **🔍 状态核查** | • 集装箱：已进港 (宁波北仑三期)<br>• 报关状态：查验 (**代码 H98**)<br>• 船期：明日 14:00 截关 (**风险极高**) |
+| **🧠 智能诊断** | H98 指令通常代表机检。如果机检图像正常，4-6 小时可放行；若转人工查验需 1-2 工作日。 |
+| **💡 行动建议** | 1. 立即联系报关行确认是否收到移箱通知。<br>2. 鉴于离截关不足 24 小时，建议立即申请**“预漏装”**以保留下一水船期舱位。 |
+
+---
+
+## ⚠️ 免责声明
+
+- 本项目仅为 **技术演示 (Demo)**，用于展示 LLM Agent 在物流领域的应用潜力。
+- 项目中的所有数据（箱号、船期、状态）均为 **模拟数据** (`data/mock_api_data.json`)。
+- 本项目未连接任何真实的港口或海关生产系统。
+
+## 📄 License
+
+MIT License © 2024 SmartPortAgent Team
+
+---
+
+<div align="center">
+  <p>如果觉得这个项目对你有帮助，请给一个 ⭐️ Star 吧！</p>
+</div>
+```
+
