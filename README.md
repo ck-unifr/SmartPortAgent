@@ -35,7 +35,7 @@
 
 *   **开发语言**: Python 3.10+
 *   **核心框架**: LangChain
-*   **大语言模型**: OpenAI GPT-4o / GPT-3.5
+*   **大语言模型**: Owen / ChatGLM
 *   **向量数据库**: FAISS (本地运行)
 *   **Embedding**: HuggingFace (m3e-base)
 
