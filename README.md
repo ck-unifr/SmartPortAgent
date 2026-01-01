@@ -43,18 +43,25 @@
 
 ```text
 SmartPortAgent/
-├── data/                    # 数据层
-│   ├── knowledge_base.txt   # RAG 知识库源文件 (口岸政策/SOP)
-│   └── mock_api_data.json   # 模拟 API 的后端业务数据
-├── src/                     # 核心代码层
-│   ├── agent/               # Agent 构建与 Prompt 定义
-│   ├── config/              # 全局配置 (环境、路径)
-│   ├── rag/                 # RAG 检索器工厂
-│   └── tools/               # 模拟查询工具 (Tools)
-├── .env.example             # 环境变量配置模版
-├── main_cli.py              # CLI 启动入口
-├── pyproject.toml           # [补充] 项目元数据与 uv 依赖管理
-└── requirements.txt         # 依赖列表
+├── data/                                     # 数据层
+│   ├── knowledge_base.txt                    # RAG 知识库源文件 (口岸政策/SOP)
+│   └── mock_api_data.json                    # 模拟 API 的后端业务数据
+├── model/                                    # [新增] 本地模型存放目录 (不要提交到 Git)
+│   └── m3e-base/                             # 下载好的 m3e-base 模型文件夹
+│       ├── config.json
+│       ├── model.safetensors
+│       └── ...
+├── script/                                   # [新增] 运维与辅助脚本
+│   └── download_sentence_embedding_model.py  # 模型下载脚本 (对应刚才优化的代码)
+├── src/                                      # 核心代码层
+│   ├── agent/                                # Agent 构建与 Prompt 定义
+│   ├── config/                               # 全局配置 (环境、路径)
+│   ├── rag/                                  # RAG 检索器工厂
+│   └── tools/                                # 模拟查询工具 (Tools)
+├── .env.example                              # 环境变量配置模版
+├── main_cli.py                               # CLI 启动入口
+├── pyproject.toml                            # [补充] 项目元数据与 uv 依赖管理
+└── requirements.txt                          # 依赖列表
 ```
 
 ## 🚀 快速开始
@@ -189,4 +196,58 @@ uv add faiss-cpu sentence-transformers
 
 ```bash
 uv run main_cli.py
+```
+
+### 下载Sentence Embedding模型
+
+这是为您准备的 `README.md` 补充内容。这段说明涵盖了**前置准备**、**运行命令**以及**下载后的验证**，适配了 `uv` 工具流。
+
+---
+
+### 📥 下载 Embedding 模型
+
+本项目采用本地加载的 `moka-ai/m3e-base` 向量模型来处理 RAG 知识检索，以确保数据的私密性与响应速度。首次运行项目前，**必须**执行下载脚本。
+
+#### 1. 快速下载（推荐）
+
+直接使用 `uv` 运行下载脚本，无需手动激活环境：
+
+```bash
+# 1. 确保环境依赖已同步
+uv sync
+
+# 2. 运行下载脚本
+uv run script/download_sentence_embedding_model.py
+```
+
+#### 2. 手动运行
+
+如果你习惯手动激活虚拟环境：
+
+```bash
+# Windows
+.venv\Scripts\activate
+python script/download_sentence_embedding_model.py
+
+# Mac/Linux
+source .venv/bin/activate
+python script/download_sentence_embedding_model.py
+```
+
+> **💡 说明**：
+> *   脚本**已内置国内镜像加速**（hf-mirror.com），无需额外配置环境变量。
+> *   支持**断点续传**，如果下载中断，重新运行命令即可。
+
+#### 3. 验证下载
+
+下载完成后，请检查项目根目录下是否生成了 `model` 文件夹，结构如下即为成功：
+
+```text
+SmartPortAgent/
+└── model/
+    └── m3e-base/
+        ├── config.json
+        ├── model.safetensors (或 pytorch_model.bin)
+        ├── tokenizer.json
+        └── ... (其他配置文件)
 ```
