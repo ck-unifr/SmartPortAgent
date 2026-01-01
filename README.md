@@ -101,8 +101,11 @@ python main_cli.py
 # 1. 初始化环境并同步依赖 (自动下载 Python 3.11 和所有依赖)
 uv sync
 
-# 2. 运行 Demo
-uv run main.py
+# 2. 测试环境
+uv run python -c "import zhipuai; print('ZhipuAI is installed:', zhipuai.__version__)"
+
+# 3. 运行 Demo
+uv run main_cli.py
 ```
 
 ## 💬 使用示例
