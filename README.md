@@ -46,12 +46,12 @@ SmartPortAgent/
 ├── data/                                     # 数据层
 │   ├── knowledge_base.txt                    # RAG 知识库源文件 (口岸政策/SOP)
 │   └── mock_api_data.json                    # 模拟 API 的后端业务数据
-├── model/                                    # [新增] 本地模型存放目录 (不要提交到 Git)
+├── model/                                    # 本地模型存放目录 (不要提交到 Git)
 │   └── m3e-base/                             # 下载好的 m3e-base 模型文件夹
 │       ├── config.json
 │       ├── model.safetensors
 │       └── ...
-├── script/                                   # [新增] 运维与辅助脚本
+├── script/                                   # 运维与辅助脚本
 │   └── download_sentence_embedding_model.py  # 模型下载脚本 (对应刚才优化的代码)
 ├── src/                                      # 核心代码层
 |   ├── web/                                  # [Web] 前端界面模块
@@ -63,7 +63,7 @@ SmartPortAgent/
 │   └── tools/                                # 模拟查询工具 (Tools)
 ├── .env.example                              # 环境变量配置模版
 ├── main_cli.py                               # CLI 启动入口
-├── pyproject.toml                            # [补充] 项目元数据与 uv 依赖管理
+├── pyproject.toml                            # 项目元数据与 uv 依赖管理
 └── requirements.txt                          # 依赖列表
 ```
 
