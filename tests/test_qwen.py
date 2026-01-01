@@ -56,5 +56,8 @@ def test_qwen_api_call():
             print(f"接口调用发生异常: {e}")
 
 if __name__ == "__main__":
+    """ 
+    uv run ./tests/test_qwen.py
+    """
     test_qwen_api_call()
     print('Done')

@@ -46,5 +46,8 @@ def test_chatglm_api_call():
 
 
 if __name__ == "__main__":
+    """ 
+    uv run ./tests/test_chatglm.py
+    """
     test_chatglm_api_call()
     print('Done')
