@@ -15,7 +15,8 @@ dependencies = [
     "zhipuai>=2.0.0",
     "dashscope>=1.14.0",
     "sniffio>=1.3.0",  
-    "httpx>=0.27.0",   
+    "httpx>=0.27.0",
+    "huggingface_hub>=0.23.0",   
 ]
 
 [tool.uv]
