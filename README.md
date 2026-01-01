@@ -83,7 +83,7 @@ cp .env.example .env
 ```
 在 `.env` 文件中：
 ```ini
-OPENAI_API_KEY="sk-xxxxxxxxxxxxxxxxxxxxxxxx"
+ZHIPUAI_API_KEY="your_api_key_here"
 ```
 
 ### 4. 运行 Demo
