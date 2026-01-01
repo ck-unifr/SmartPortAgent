@@ -29,7 +29,12 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.tools import BaseTool
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_community.chat_models import ChatZhipuAI
-from langchain_community.chat_models import ChatTongyi
+
+# from langchain_community.chat_models import ChatTongyi
+try:
+    from langchain_openai import ChatOpenAI
+except ImportError:
+    from langchain_community.chat_models import ChatOpenAI
 
 from src.tools.port_tools import all_tools
 from src.rag.retriever_factory import get_rag_tool
@@ -71,13 +76,16 @@ class PortAgentFactory:
                 model=settings.ZHIPU_MODEL_NAME,
                 api_key=settings.ZHIPUAI_API_KEY,
                 temperature=self.temperature,
+                # Zhipu 建议关闭流式以获得更稳定的工具调用
+                streaming=False,
             )
         elif provider == "qwen":
-            return ChatTongyi(
-                model=settings.QWEN_MODEL_NAME,
+            return ChatOpenAI(
+                model=settings.QWEN_MODEL_NAME,  # 确保这里是 "qwen-turbo" 或 "qwen-max"
                 api_key=settings.DASHSCOPE_API_KEY,
+                base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",  # 阿里云兼容端点
                 temperature=self.temperature,
-                streaming=True,
+                streaming=False,  # 即使这里设为 False，ChatOpenAI 也能处理 Agent 强制的 stream 调用
             )
         else:
             raise ValueError(f"❌ Unsupport Provider: {provider}")

@@ -51,7 +51,7 @@ RETRIEVER_TOOL_DESCRIPTION = (
 
 # 🟢 选择你的 LLM 提供商
 # 可选值: "zhipu" (智谱GLM) 或 "qwen" (阿里通义千问)
-LLM_PROVIDER = os.getenv("LLM_PROVIDER", "zhipu").lower()
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "qwen").lower()
 
 # --- 1. 智谱 AI (ChatGLM) 配置 ---
 ZHIPUAI_API_KEY = os.getenv("ZHIPUAI_API_KEY")
@@ -62,7 +62,7 @@ ZHIPU_MODEL_NAME = "glm-4"
 DASHSCOPE_API_KEY = os.getenv("DASHSCOPE_API_KEY")
 # 模型选项: "qwen-plus" (推荐), "qwen-max" (最强), "qwen-turbo" (最快/便宜)
 QWEN_MODEL_NAME = "qwen-turbo"
-
+# QWEN_MODEL_NAME = "qwen-plus"
 
 # --- 配置检查 (仅在直接运行此文件或初始化时提示) ---
 if __name__ != "__main__":

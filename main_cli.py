@@ -1,6 +1,12 @@
 # main_cli.py
+import os
+
+# 禁用 HuggingFace Tokenizers 的并行化，防止死锁和警告
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
 import warnings
 import sys
+import traceback
 from src.agent.agent_creator import create_port_agent
 from src.config import settings
 
@@ -67,10 +73,12 @@ def run_cli():
             break
         except Exception as e:
             print(f"❌ 发生了一个错误: {e}")
+            print("🔍 错误堆栈详情:")
+            traceback.print_exc()  # <--- 关键修改：打印完整堆栈
 
 
 if __name__ == "__main__":
-    """ 
+    """
     uv run python -m main_cli
 
     query:
