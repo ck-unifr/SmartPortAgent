@@ -13,6 +13,7 @@ dependencies = [
     "python-dotenv>=1.0.0",
     "sentence-transformers>=2.2.2",
     "zhipuai>=2.0.0",
+    "dashscope>=1.14.0",
     "sniffio>=1.3.0",  
     "httpx>=0.27.0",   
 ]
