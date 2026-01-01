@@ -52,7 +52,8 @@ SmartPortAgent/
 │   ├── rag/                 # RAG 检索器工厂
 │   └── tools/               # 模拟查询工具 (Tools)
 ├── .env.example             # 环境变量配置模版
-├── main.py                  # CLI 启动入口
+├── main_cli.py              # CLI 启动入口
+├── pyproject.toml           # [补充] 项目元数据与 uv 依赖管理
 └── requirements.txt         # 依赖列表
 ```
 
