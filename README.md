@@ -5,6 +5,7 @@
 ![uv](https://img.shields.io/badge/uv-fastest-purple?logo=python)
 ![LangChain](https://img.shields.io/badge/LangChain-v0.1-green?logo=chainlink)
 ![ZhipuAI](https://img.shields.io/badge/ZhipuAI-GLM--4-blueviolet)
+![Qwen](https://img.shields.io/badge/Qwen-Turbo%2FMax-ff6a00?logo=alibabacloud&logoColor=white)
 ![RAG](https://img.shields.io/badge/RAG-Enabled-purple)
 ![License](https://img.shields.io/badge/License-MIT-grey)
 
