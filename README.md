@@ -56,7 +56,7 @@
 ```mermaid
 graph TD
     User[用户指令] --> WebUI[Streamlit Web 界面]
-    WebUI --> Agent[SmartPort Agent (LangChain)]
+    WebUI --> Agent["SmartPort Agent (LangChain)"]
     
     subgraph "核心逻辑层"
         Agent -->|意图识别| Planner[任务规划器]
@@ -65,13 +65,13 @@ graph TD
     end
     
     subgraph "数据与知识层"
-        Tools --> MockAPI[(模拟业务数据库)]
-        RAG --> VectorDB[(FAISS 向量库)]
+        Tools --> MockAPI[("模拟业务数据库")]
+        RAG --> VectorDB[("FAISS 向量库")]
         VectorDB -.->|Embedding| Model[m3e-base 本地模型]
     end
     
     subgraph "大模型服务"
-        Agent <-->|推理/生成| LLM[ZhipuGLM / Qwen]
+        Agent <-->|推理/生成| LLM[ChatGLM / Qwen]
     end
     
     Agent -->|最终回复| WebUI
