@@ -44,6 +44,7 @@ RETRIEVER_TOOL_DESCRIPTION = (
     "当你需要解释为什么会出现某种海关状态，或者该如何应对时，使用这个工具。"
 )
 
+VECTOR_STORE_PATH: Path = Path("data/vector_store_index") 
 
 # =======================================================
 # --- 大模型 (LLM) 配置 ---
