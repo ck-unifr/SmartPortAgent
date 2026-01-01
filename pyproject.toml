@@ -1,0 +1,22 @@
+[project]
+name = "smart-port-agent"
+version = "0.1.0"
+description = "智能口岸通关异常诊断与决策助手"
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    "faiss-cpu>=1.7.4",
+    "langchain>=0.1.0",
+    "langchain-community>=0.0.10",
+    "langchain-core>=0.1.0",
+    "langchain-huggingface>=0.0.1",
+    "python-dotenv>=1.0.0",
+    "sentence-transformers>=2.2.2",
+    "zhipuai>=2.0.0",
+    "sniffio>=1.3.0",  
+    "httpx>=0.27.0",   
+]
+
+[tool.uv]
+# 可以在这里锁定具体的 Python 版本，防止在 3.13 上运行出错
+package = true
