@@ -2,6 +2,7 @@
 # SmartPortAgent | 智能口岸通关异常诊断助手
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)
+![uv](https://img.shields.io/badge/uv-fastest-purple?logo=python)
 ![LangChain](https://img.shields.io/badge/LangChain-v0.1-green?logo=chainlink)
 ![ZhipuAI](https://img.shields.io/badge/ZhipuAI-GLM--4-blueviolet)
 ![RAG](https://img.shields.io/badge/RAG-Enabled-purple)
@@ -88,7 +89,20 @@ ZHIPUAI_API_KEY="your_api_key_here"
 
 ### 4. 运行 Demo
 ```bash
-python main.py
+python main_cli.py
+```
+
+### 5. 安装与运行 (使用 uv)
+
+确保你已安装 uv。如果没有，请先运行：
+`curl -LsSf https://astral.sh/uv/install.sh | sh` (macOS/Linux) 或参考官方文档。
+
+```bash
+# 1. 初始化环境并同步依赖 (自动下载 Python 3.11 和所有依赖)
+uv sync
+
+# 2. 运行 Demo
+uv run main.py
 ```
 
 ## 💬 使用示例
@@ -117,8 +131,55 @@ python main.py
 
 本项目仅为 **技术演示 (Demo)**，用于展示 LLM Agent 在物流领域的应用潜力。
 *   项目中的所有数据（箱号、船期、状态）均为**模拟数据**。
-*   本项目**未连接**任何真实的宁波港或海关生产系统。
+*   本项目**未连接**任何真实的港口或海关生产系统。
 
 ## 📄 License
 
 MIT License
+
+## 附录:
+### 使用 uv 的步骤与命令
+
+假设你已经位于 `SmartPortAgent` 文件夹下。
+
+#### 第一步：安装 uv (如果尚未安装)
+```bash
+# macOS / Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Windows (PowerShell)
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+#### 第二步：初始化项目
+这将创建 `pyproject.toml` 文件（现代 Python 项目标准配置）。
+
+```bash
+uv init
+```
+
+#### 第三步：指定 Python 版本
+我们显式指定使用 Python 3.11 以确保兼容性。`uv` 会自动为你下载并管理这个版本的 Python，不会污染你的系统环境。
+
+```bash
+uv python pin 3.11
+```
+
+#### 第四步：添加依赖
+我们将 `requirements.txt` 中的依赖迁移到 `uv` 管理。
+
+```bash
+# 添加核心依赖
+uv add langchain langchain-core langchain-community langchain-huggingface zhipuai python-dotenv
+
+# 添加 AI 计算库 (这些库对版本敏感)
+uv add faiss-cpu sentence-transformers
+```
+*执行完上述命令后，`uv` 会自动创建 `.venv` 虚拟环境并安装好所有包。*
+
+#### 第五步：运行项目
+使用 `uv run` 可以自动加载虚拟环境和 `.env` 变量（uv 0.4+ 支持自动加载 .env，如果不生效可手动加载）。
+
+```bash
+uv run main_cli.py
+```
