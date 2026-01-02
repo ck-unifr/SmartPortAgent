@@ -12,7 +12,8 @@ from langchain_core.messages import AIMessage, HumanMessage
 from src.agent.agent_creator import create_port_agent
 from src.web.utils import load_css, typewriter_effect
 from src.web.sidebar import render_sidebar
-from src.web.admin import render_admin_panel  # 导入新模块
+from src.web.admin import render_admin_panel
+from src.web.callbacks import AgentMonitorCallback  # 导入回调
 
 # --- 1. 页面配置 ---
 st.set_page_config(
@@ -32,50 +33,115 @@ def get_agent_engine():
         return None
 
 
-# --- 3. 聊天视图逻辑 ---
+# --- 3. 辅助函数：渲染监控面板 ---
+def render_monitor_metrics(metrics: dict):
+    """渲染监控数据 (Token, 耗时, RAG来源)"""
+    with st.expander("📊 诊断监控面板 (Trace & Metrics)", expanded=False):
+        # 1. 基础指标
+        c1, c2, c3, c4 = st.columns(4)
+        c1.metric("⏱️ 耗时", f"{metrics['latency']}s")
+        c2.metric("📥 Input Tokens", metrics["tokens"]["input"])
+        c3.metric("📤 Output Tokens", metrics["tokens"]["output"])
+        c4.metric("∑ Total Tokens", metrics["tokens"]["total"])
+
+        # 2. RAG 召回内容
+        st.markdown("#### 📖 RAG 知识库召回")
+        if metrics["rag_docs"]:
+            for i, doc in enumerate(metrics["rag_docs"]):
+                st.info(f"**Source {i+1}**: {doc.page_content}")
+        else:
+            st.caption("本次回答未使用 RAG 检索或未命中知识库。")
+
+        # 3. 工具调用日志 (可选)
+        if metrics.get("tool_calls"):
+            st.markdown("#### 🛠️ 工具调用链")
+            st.json(metrics["tool_calls"])
+
+
+# --- 4. 聊天视图逻辑 ---
 def render_chat_view(agent_executor):
     st.title("🚢 智能口岸异常诊断助手")
 
-    # 初始化消息
-    if "messages" not in st.session_state:
-        st.session_state.messages = [
-            AIMessage(
-                content="你好！我是**小宁**。请告诉我您的箱号、提单号或业务问题。"
-            )
+    # 初始化消息结构: {"role": str, "content": str, "metrics": dict/None}
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = [
+            {
+                "role": "assistant",
+                "content": "你好！我是**小宁**。请告诉我您的箱号、提单号或业务问题。",
+                "metrics": None,
+            }
         ]
 
     # 渲染历史
-    for msg in st.session_state.messages:
-        avatar = "🤖" if isinstance(msg, AIMessage) else "👤"
-        with st.chat_message(
-            "assistant" if isinstance(msg, AIMessage) else "user", avatar=avatar
-        ):
-            st.markdown(msg.content)
+    for msg in st.session_state.chat_history:
+        avatar = "🤖" if msg["role"] == "assistant" else "👤"
+        with st.chat_message(msg["role"], avatar=avatar):
+            st.markdown(msg["content"])
+            # 如果存在监控数据，且是 AI 回复，则显示面板
+            if msg.get("metrics"):
+                render_monitor_metrics(msg["metrics"])
 
     # 处理输入
     if prompt := st.chat_input("请输入查询内容..."):
+        # 1. 显示用户消息
         with st.chat_message("user", avatar="👤"):
             st.markdown(prompt)
-        st.session_state.messages.append(HumanMessage(content=prompt))
+        st.session_state.chat_history.append(
+            {"role": "user", "content": prompt, "metrics": None}
+        )
 
+        # 2. 处理 AI 响应
         if agent_executor:
             with st.chat_message("assistant", avatar="🤖"):
                 msg_placeholder = st.empty()
-                with st.spinner("🔍 正在检索数据与法规..."):
-                    try:
-                        response = agent_executor.invoke({"input": prompt})
-                        result = response["output"]
-                        msg_placeholder.write_stream(typewriter_effect(result))
-                        st.session_state.messages.append(AIMessage(content=result))
-                    except Exception as e:
-                        st.error(f"系统错误: {e}")
+                status_container = st.status("🔍 小宁正在分析...", expanded=True)
+
+                # 初始化回调监听器
+                monitor_callback = AgentMonitorCallback()
+
+                try:
+                    # 执行 Agent (注入回调)
+                    response = agent_executor.invoke(
+                        {"input": prompt}, config={"callbacks": [monitor_callback]}
+                    )
+                    result_text = response["output"]
+
+                    # 更新状态栏
+                    status_container.update(
+                        label="✅ 分析完成", state="complete", expanded=False
+                    )
+
+                    # 打字机输出
+                    msg_placeholder.write_stream(typewriter_effect(result_text))
+
+                    # 整理监控数据
+                    metrics_data = {
+                        "latency": monitor_callback.latency,
+                        "tokens": monitor_callback.token_usage,
+                        "rag_docs": monitor_callback.rag_documents,
+                        "tool_calls": monitor_callback.tool_calls,
+                    }
+
+                    # 显示本次监控面板
+                    render_monitor_metrics(metrics_data)
+
+                    # 保存到历史
+                    st.session_state.chat_history.append(
+                        {
+                            "role": "assistant",
+                            "content": result_text,
+                            "metrics": metrics_data,
+                        }
+                    )
+
+                except Exception as e:
+                    status_container.update(label="❌ 发生错误", state="error")
+                    st.error(f"系统错误: {e}")
 
 
-# --- 4. 主入口 ---
+# --- 5. 主入口 ---
 def main():
     load_css()
-
-    # 获取当前选中的页面模式
     current_page = render_sidebar()
 
     if current_page == "💬 智能对话":
@@ -83,12 +149,11 @@ def main():
         render_chat_view(agent)
 
     elif current_page == "🛠️ 数据配置":
-        # 如果进入配置页，验证密码（可选）或直接显示
         render_admin_panel()
 
 
 if __name__ == "__main__":
-    """
+    """ 
     uv run streamlit run src/web/app.py
 
     query:
