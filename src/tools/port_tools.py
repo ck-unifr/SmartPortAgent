@@ -6,6 +6,8 @@ from typing import Dict, Any, Union
 
 from src.config import settings
 
+MOCK_FILENAME = "mock_api_data.json"
+
 
 def _load_mock_data() -> Dict[str, Any]:
     """加载模拟的API数据，增加错误处理"""
@@ -13,8 +15,8 @@ def _load_mock_data() -> Dict[str, Any]:
         path = settings.MOCK_API_DATA_PATH
         # 兼容性处理：如果配置路径不存在，尝试在根目录找
         if not os.path.exists(path):
-            if os.path.exists("mock_api_data.json"):
-                path = "mock_api_data.json"
+            if os.path.exists(MOCK_FILENAME):
+                path = MOCK_FILENAME
             else:
                 # 返回一个特殊的标记，表明是系统级错误
                 return {"_system_error": f"严重错误：数据文件未找到 ({path})"}
