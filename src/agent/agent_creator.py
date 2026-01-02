@@ -4,6 +4,10 @@ from typing import List
 from typing import List, Optional
 import sys
 import importlib.metadata
+import logging
+
+# 配置日志
+logger = logging.getLogger(__name__)
 
 # --- 标准导入 ---
 try:
@@ -11,20 +15,22 @@ try:
     # 注意：在 LangChain 0.3+ 中，AgentExecutor 依然位于 langchain.agents
     from langchain.agents import AgentExecutor, create_tool_calling_agent
 except ImportError as e:
-    print(f"❌ 严重错误: 无法导入 AgentExecutor。")
-    print(f"   错误详情: {e}")
-    print("   诊断信息:")
+    logger.error(f"❌ 严重错误: 无法导入 AgentExecutor。")
+    logger.error(f"   错误详情: {e}")
+    logger.error("   诊断信息:")
 
     # 使用 importlib.metadata (Python 3.8+) 替代过时的 pkg_resources
     packages_to_check = ["langchain", "langchain-community", "langchain-core"]
     for pkg in packages_to_check:
         try:
             version = importlib.metadata.version(pkg)
-            print(f"   ✅ {pkg}: {version}")
+            logger.debug(f"   ✅ {pkg}: {version}")
         except importlib.metadata.PackageNotFoundError:
-            print(f"   ❌ {pkg}: 未安装")
+            logger.error(f"   ❌ {pkg}: 未安装")
 
-    print("\n   建议操作: 请删除 .venv 文件夹和 uv.lock 文件，然后重新运行 'uv sync'")
+    logger.error(
+        "\n   建议操作: 请删除 .venv 文件夹和 uv.lock 文件，然后重新运行 'uv sync'"
+    )
     sys.exit(1)
 
 from langchain_core.prompts import ChatPromptTemplate

@@ -2,6 +2,7 @@
 import os
 from pathlib import Path
 from typing import List
+import logging
 
 from langchain_community.document_loaders import TextLoader
 from langchain_community.vectorstores import FAISS
@@ -11,6 +12,9 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter, TextSplitter
 
 from src.config import settings
+
+# 配置日志
+logger = logging.getLogger(__name__)
 
 
 class RAGRetrieverFactory:
@@ -28,7 +32,7 @@ class RAGRetrieverFactory:
         chunk_overlap: int = settings.CHUNK_OVERLAP,
         search_k: int = settings.SEARCH_K,
     ):
-        print("🔄 正在初始化 RAG 服务...")
+        logger.info("🔄 正在初始化 RAG 服务...")
         self.config = {
             "kb_path": knowledge_base_path,
             "vs_path": vector_store_path,
@@ -48,7 +52,7 @@ class RAGRetrieverFactory:
         self.retriever = self.vectorstore.as_retriever(
             search_kwargs={"k": self.config["search_k"]}
         )
-        print("✅ RAG 检索器准备就绪。")
+        logger.info("✅ RAG 检索器准备就绪。")
 
     def _get_vectorstore(self) -> FAISS:
         """
@@ -61,7 +65,7 @@ class RAGRetrieverFactory:
         # 策略 A: 尝试加载本地索引
         if vs_path.exists() and (vs_path / "index.faiss").exists():
             try:
-                print(f"📂 发现本地向量库，正在加载: {vs_path}")
+                logger.info(f"📂 发现本地向量库，正在加载: {vs_path}")
                 return FAISS.load_local(
                     str(vs_path),
                     self.embeddings,
@@ -69,10 +73,10 @@ class RAGRetrieverFactory:
                     allow_dangerous_deserialization=True,
                 )
             except Exception as e:
-                print(f"⚠️ 加载本地向量库失败 ({e})，将回退到重新构建...")
+                logger.error(f"⚠️ 加载本地向量库失败 ({e})，将回退到重新构建...")
 
         # 策略 B: 回退到内存构建
-        print("🔨 本地索引不可用，正在从源文件构建向量库...")
+        logger.info("🔨 本地索引不可用，正在从源文件构建向量库...")
         return self._build_from_source()
 
     def _build_from_source(self) -> FAISS:
@@ -80,7 +84,7 @@ class RAGRetrieverFactory:
         file_path = self.config["kb_path"]
 
         if not file_path.exists():
-            print(f"⚠️ 严重警告: 知识库源文件未找到: {file_path}")
+            logger.warning(f"⚠️ 严重警告: 知识库源文件未找到: {file_path}")
             # 返回空库防止报错
             empty_doc = Document(
                 page_content="暂无知识库数据。", metadata={"source": "empty"}
