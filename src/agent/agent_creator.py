@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import List
+from typing import List, Optional
 import sys
 import importlib.metadata
 
@@ -28,6 +29,7 @@ except ImportError as e:
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.tools import BaseTool
 from langchain_core.language_models.chat_models import BaseChatModel
+from langchain_core.callbacks import BaseCallbackHandler
 from langchain_community.chat_models import ChatZhipuAI
 
 # from langchain_community.chat_models import ChatTongyi
@@ -42,7 +44,7 @@ from src.config import settings
 
 SYSTEM_PROMPT_TEMPLATE = """
 身份定义：
-你是“宁波国际物流网”的资深业务专家助手“小宁”。你精通集装箱动态、海关查验流程及船期调度。
+你是“国际物流网”的资深业务专家助手“小宁”。你精通集装箱动态、海关查验流程及船期调度。
 
 当前时间：
 {current_time}
@@ -78,6 +80,11 @@ class PortAgentFactory:
                 temperature=self.temperature,
                 # Zhipu 建议关闭流式以获得更稳定的工具调用
                 streaming=False,
+                # 注意: ChatZhipuAI 默认会在 llm_output 中返回 token_usage
+                # 显式禁用搜索工具，防止模型自行搜索互联网干扰 RAG
+                model_kwargs={
+                    "tools": [{"type": "web_search", "web_search": {"enable": False}}]
+                },
             )
         elif provider == "qwen":
             return ChatOpenAI(
@@ -86,6 +93,8 @@ class PortAgentFactory:
                 base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",  # 阿里云兼容端点
                 temperature=self.temperature,
                 streaming=False,  # 即使这里设为 False，ChatOpenAI 也能处理 Agent 强制的 stream 调用
+                # 关键: 强制要求返回 Token 用量 (OpenAI 协议兼容)
+                model_kwargs={"stream_options": {"include_usage": True}},
             )
         else:
             raise ValueError(f"❌ Unsupport Provider: {provider}")
@@ -101,13 +110,24 @@ class PortAgentFactory:
         )
         return prompt.partial(current_time=current_time_str)
 
-    def create_executor(self, verbose: bool = True) -> AgentExecutor:
+    def create_executor(
+        self,
+        verbose: bool = True,
+        callbacks: Optional[List[BaseCallbackHandler]] = None,
+    ) -> AgentExecutor:
+        """
+        创建 Agent 执行器
+        :param verbose: 是否打印详细日志
+        :param callbacks: 回调列表，用于传递给 Agent 监控 Token 和耗时
+        """
         prompt = self._build_prompt()
         agent = create_tool_calling_agent(self.llm, self.tools, prompt)
+
         return AgentExecutor(
             agent=agent,
             tools=self.tools,
             verbose=verbose,
+            callbacks=callbacks,  # ✅ 关键: 将监控回调注入到执行器
             handle_parsing_errors=True,
             max_iterations=5,
         )
