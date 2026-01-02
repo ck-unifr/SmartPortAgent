@@ -60,26 +60,59 @@
 
 ```mermaid
 graph TD
-    User[用户指令] --> WebUI[Streamlit Web 界面]
-    WebUI --> Agent["SmartPort Agent (LangChain)"]
-    
-    subgraph "核心逻辑层"
-        Agent -->|意图识别| Planner[任务规划器]
-        Planner -->|需要数据| Tools[工具集 Port Tools]
-        Planner -->|需要知识| RAG[RAG 检索系统]
+    %% 用户层
+    User((用户)) --> WebUI[Streamlit Web 界面]
+
+    %% 界面拆分
+    subgraph Web_Layer [展示层]
+        WebUI --> ChatPage[💬 智能对话页面]
+        WebUI --> AuditPage[🔍 历史审计页面]
     end
-    
-    subgraph "数据与知识层"
-        Tools --> MockAPI[("模拟业务数据库")]
-        RAG --> VectorDB[("FAISS 向量库")]
-        VectorDB -.->|Embedding| Model[m3e-base 本地模型]
+
+    %% 配置层
+    Config[(.env / Settings)] -.-> Agent
+
+    %% 核心编排层
+    subgraph Agent_Core [核心编排层 - LangChain 0.3]
+        Agent[Port Agent Executor]
+        Callback[AgentMonitorCallback]
+        
+        Agent <-->|1. 思考/决策| LLM
+        Agent -->|2. 拦截指标| Callback
+        Agent -->|3. 执行动作| Tools_RAG
     end
-    
-    subgraph "大模型服务"
-        Agent <-->|推理/生成| LLM[ChatGLM / Qwen]
+
+    %% 模型服务层
+    subgraph LLM_Service [大模型服务]
+        LLM{LLM Provider}
+        LLM --- Zhipu[智谱 GLM-4]
+        LLM --- Qwen[阿里通义 Qwen]
     end
-    
-    Agent -->|最终回复| WebUI
+
+    %% 能力整合层
+    subgraph Tools_RAG [能力与知识层]
+        direction LR
+        Tools[Port Tools] --> MockAPI[(模拟业务 API)]
+        RAG[RAG 检索系统] --> VectorDB[(FAISS 向量库)]
+        VectorDB -.->|本地推理| EmbedModel[m3e/bge Embedding]
+    end
+
+    %% 持久化与审计
+    subgraph Persistence_Layer [数据持久化层]
+        Callback -->|异步记录| DB[(SQLite 数据库)]
+        DB -.->|读取历史/Token| AuditPage
+        ChatLog[chat_logs 表] --- DB
+    end
+
+    %% 返回路径
+    Tools_RAG -->|返回数据/知识| Agent
+    Agent -->|最终响应| ChatPage
+
+    %% 样式美化
+    style Agent fill:#f96,stroke:#333,stroke-width:2px
+    style LLM fill:#69f,stroke:#333,stroke-width:2px
+    style DB fill:#4db6ac,stroke:#333
+    style Callback fill:#ffeb3b,stroke:#333
 ```
 
 **技术栈详情：**
@@ -106,6 +139,7 @@ SmartPortAgent/
 │   ├── agent/               # Agent 核心逻辑 (ReAct)
 │   ├── rag/                 # RAG 检索模块
 │   ├── tools/               # 模拟 API 工具函数
+│   ├── database/            # 数据库访问层 (DAO)
 │   └── web/                 # Streamlit 前端界面
 ├── .env.example             # 环境变量模版
 ├── main_cli.py              # 命令行启动入口
