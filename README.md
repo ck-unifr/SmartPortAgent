@@ -73,7 +73,7 @@ graph TD
     Config[(.env / Settings)] -.-> Agent
 
     %% 核心编排层
-    subgraph Agent_Core [核心编排层 - LangChain 0.3]
+    subgraph Agent_Core [核心编排层]
         Agent[Port Agent Executor]
         Callback[AgentMonitorCallback]
         
