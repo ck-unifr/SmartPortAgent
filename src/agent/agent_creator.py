@@ -46,7 +46,7 @@ from src.agent.prompts import SYSTEM_PROMPT_TEMPLATE
 
 
 class PortAgentFactory:
-    def __init__(self, temperature: float = 0.01):
+    def __init__(self, temperature: float = 0.001):
         self.temperature = temperature
         self.tools = self._load_tools()
         self.llm = self._init_llm()

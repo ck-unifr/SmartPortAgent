@@ -3,6 +3,27 @@
 uv run streamlit run src/web/app.py
 
 query:
+> 查一下箱号 TRLU1234567 和提单号 BILL001 的状态，这票货放行了吗？
+预期行为：调用 API 获取数据，确认海关状态为“放行”，VGM 已发送，告知用户一切正常。
+
+> 帮我看下箱号 NBCT1234567，提单号 BILL002。海关状态显示 H98，这是什么意思？需要开箱吗？
+预期行为：
+调用 API 发现状态是“查验（H98）”。
+检索知识库解释“H98”是机检（X光），通常不需要开箱，除非图像异常转人工。
+
+> 提单号 BILL002 是 15号中午被布控的，能赶上“中远海运金牛座”这艘船吗？我很急。
+预期行为：
+调用 API 获取 BILL002 的查验时间（15日 11:30）和 船的截关时间（16日 14:00）。
+检索知识库得知 H98 耗时通常 4-8 小时。
+推理：15日 11:30 + 8小时 = 15日 19:30，早于截关时间（16日 14:00）。
+回复：理论上能赶上，但需警惕转人工查验的风险。
+
+> 如果 BILL002 查验太慢赶不上船了，我该怎么办？有什么补救措施吗？
+预期行为：检索知识库，建议联系报关行，并提及“申请预漏装”以避免码头堆存费。
+
+> 查一下箱号 FALSE888888，看看这票货哪里出问题了。
+预期行为：调用 API 返回未找到或空数据，Agent 礼貌告知用户数据不存在，请核对号码。
+
 帮我查一下箱号 NBCT1234567，提单号 BILL002。这票货明天能赶上“中远海运金牛座”吗？我很急，一直没放行。
 
 查一下集装箱 TRLU1234567，提单号 BILL001。船名是“中远海运金牛座”。一切正常吗？
@@ -27,6 +48,21 @@ from src.web.admin import render_admin_panel
 from src.web.callbacks import AgentMonitorCallback  # 导入回调
 from src.web.monitor import render_monitor_page
 from langchain_community.callbacks import StreamlitCallbackHandler
+
+
+INIT_MESSAGE = """ 
+
+你好！我是**小宁**。请告诉我您的箱号、提单号或业务问题。\n
+例如：\n
+查一下箱号 TRLU1234567 和提单号 BILL001 的状态，这票货放行了吗？\n
+帮我看下箱号 NBCT1234567，提单号 BILL002。海关状态显示 H98，这是什么意思？需要开箱吗？\n
+提单号 BILL002 是 15号中午被布控的，能赶上“中远海运金牛座”这艘船吗？我很急。\n
+如果 BILL002 查验太慢赶不上船了，我该怎么办？有什么补救措施吗？\n
+查一下箱号 FALSE888888，看看这票货哪里出问题了。\n
+帮我查一下箱号 NBCT1234567，提单号 BILL002。这票货明天能赶上“中远海运金牛座”吗？我很急，一直没放行。\n
+查一下集装箱 TRLU1234567，提单号 BILL001。船名是“中远海运金牛座”。一切正常吗？\n
+帮我查个不存在的箱子 ERROR999999，看看什么情况。\n
+"""
 
 # --- 1. 页面配置 ---
 st.set_page_config(
@@ -75,24 +111,12 @@ def render_monitor_metrics(metrics: dict):
 def render_chat_view(agent_executor):
     st.title("🚢 智能口岸异常诊断助手")
 
-    init_message = """ 
-
-    你好！我是**小宁**。请告诉我您的箱号、提单号或业务问题。
-
-    例如：
-
-    帮我查一下箱号 NBCT1234567，提单号 BILL002。这票货明天能赶上“中远海运金牛座”吗？我很急，一直没放行。
-
-    查一下集装箱 TRLU1234567，提单号 BILL001。船名是“中远海运金牛座”。一切正常吗？
-
-    帮我查个不存在的箱子 ERROR999999，看看什么情况。
-    """
     # 初始化消息结构: {"role": str, "content": str, "metrics": dict/None}
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = [
             {
                 "role": "assistant",
-                "content": init_message,
+                "content": INIT_MESSAGE,
                 "metrics": None,
             }
         ]
