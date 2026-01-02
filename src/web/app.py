@@ -1,4 +1,15 @@
 # src/web/app.py
+"""
+uv run streamlit run src/web/app.py
+
+query:
+帮我查一下箱号 NBCT1234567，提单号 BILL002。这票货明天能赶上“中远海运金牛座”吗？我很急，一直没放行。
+
+查一下集装箱 TRLU1234567，提单号 BILL001。船名是“中远海运金牛座”。一切正常吗？
+
+帮我查个不存在的箱子 ERROR999999，看看什么情况。
+"""
+
 import sys
 import streamlit as st
 from pathlib import Path
@@ -15,6 +26,7 @@ from src.web.sidebar import render_sidebar
 from src.web.admin import render_admin_panel
 from src.web.callbacks import AgentMonitorCallback  # 导入回调
 from src.web.monitor import render_monitor_page
+from langchain_community.callbacks import StreamlitCallbackHandler
 
 # --- 1. 页面配置 ---
 st.set_page_config(
@@ -68,7 +80,7 @@ def render_chat_view(agent_executor):
     你好！我是**小宁**。请告诉我您的箱号、提单号或业务问题。
 
     例如：
-    
+
     帮我查一下箱号 NBCT1234567，提单号 BILL002。这票货明天能赶上“中远海运金牛座”吗？我很急，一直没放行。
 
     查一下集装箱 TRLU1234567，提单号 BILL001。船名是“中远海运金牛座”。一切正常吗？
@@ -107,49 +119,71 @@ def render_chat_view(agent_executor):
         if agent_executor:
             with st.chat_message("assistant", avatar="🤖"):
                 msg_placeholder = st.empty()
-                status_container = st.status("🔍 小宁正在分析...", expanded=True)
 
-                # 初始化回调监听器
-                monitor_callback = AgentMonitorCallback()
+                # --- 修改开始 ---
 
-                try:
-                    # 执行 Agent (注入回调)
-                    response = agent_executor.invoke(
-                        {"input": prompt}, config={"callbacks": [monitor_callback]}
-                    )
-                    result_text = response["output"]
+                # 创建状态容器
+                with st.status("🔍 小宁正在分析...", expanded=True) as status_container:
 
-                    # 更新状态栏
-                    status_container.update(
-                        label="✅ 分析完成", state="complete", expanded=False
+                    # 2. 初始化 Streamlit 专用回调，指定父容器为 status_container
+                    # 这样中间步骤就会打印在“分析完成”这个折叠框里
+                    st_callback = StreamlitCallbackHandler(
+                        parent_container=status_container
                     )
 
-                    # 打字机输出
-                    msg_placeholder.write_stream(typewriter_effect(result_text))
+                    # 初始化原本的监控回调 (用于后台记录数据)
+                    monitor_callback = AgentMonitorCallback()
 
-                    # 整理监控数据
-                    metrics_data = {
-                        "latency": monitor_callback.latency,
-                        "tokens": monitor_callback.token_usage,
-                        "rag_docs": monitor_callback.rag_documents,
-                        "tool_calls": monitor_callback.tool_calls,
+                    try:
+                        # 3. 执行 Agent，同时传入两个回调：
+                        # st_callback 用于前端展示思考过程
+                        # monitor_callback 用于后台统计 Token 和日志
+                        response = agent_executor.invoke(
+                            {"input": prompt},
+                            config={"callbacks": [monitor_callback, st_callback]},
+                        )
+
+                        result_text = response["output"]
+
+                        # 更新状态栏为完成
+                        status_container.update(
+                            label="✅ 分析完成 (点击查看思考过程)",
+                            state="complete",
+                            expanded=False,
+                        )
+
+                    except Exception as e:
+                        status_container.update(label="❌ 发生错误", state="error")
+                        st.error(f"系统错误: {e}")
+                        return  # 遇到错误提前结束
+
+                # --- 修改结束 ---
+
+                # 打字机输出最终结果
+                msg_placeholder.write_stream(typewriter_effect(result_text))
+
+                # 整理监控数据
+                metrics_data = {
+                    "latency": monitor_callback.latency,
+                    "tokens": monitor_callback.token_usage,
+                    "rag_docs": monitor_callback.rag_documents,
+                    "tool_calls": monitor_callback.tool_calls,
+                }
+
+                # 显示本次监控面板
+                render_monitor_metrics(metrics_data)
+
+                # 保存到历史
+                st.session_state.chat_history.append(
+                    {
+                        "role": "assistant",
+                        "content": result_text,
+                        "metrics": metrics_data,
                     }
-
-                    # 显示本次监控面板
-                    render_monitor_metrics(metrics_data)
-
-                    # 保存到历史
-                    st.session_state.chat_history.append(
-                        {
-                            "role": "assistant",
-                            "content": result_text,
-                            "metrics": metrics_data,
-                        }
-                    )
-
-                except Exception as e:
-                    status_container.update(label="❌ 发生错误", state="error")
-                    st.error(f"系统错误: {e}")
+                )
+            # except Exception as e:
+            #     status_container.update(label="❌ 发生错误", state="error")
+            #     st.error(f"系统错误: {e}")
 
 
 # --- 5. 主入口 ---
@@ -169,14 +203,4 @@ def main():
 
 
 if __name__ == "__main__":
-    """
-    uv run streamlit run src/web/app.py
-
-    query:
-    帮我查一下箱号 NBCT1234567，提单号 BILL002。这票货明天能赶上“中远海运金牛座”吗？我很急，一直没放行。
-
-    查一下集装箱 TRLU1234567，提单号 BILL001。船名是“中远海运金牛座”。一切正常吗？
-
-    帮我查个不存在的箱子 ERROR999999，看看什么情况。
-    """
     main()
