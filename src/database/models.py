@@ -15,7 +15,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 from src.config import settings
 
 # 假设在 settings 中增加了 DB_PATH，如果没有，默认用 local.db
-DB_URL = f"sqlite:///{getattr(settings, 'DB_PATH', 'chat_history.db')}"
+DB_URL = f"sqlite:///{settings.DB_PATH}"
 
 Base = declarative_base()
 
