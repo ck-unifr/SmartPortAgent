@@ -14,6 +14,7 @@ from src.web.utils import load_css, typewriter_effect
 from src.web.sidebar import render_sidebar
 from src.web.admin import render_admin_panel
 from src.web.callbacks import AgentMonitorCallback  # 导入回调
+from src.web.monitor import render_monitor_page
 
 # --- 1. 页面配置 ---
 st.set_page_config(
@@ -62,12 +63,24 @@ def render_monitor_metrics(metrics: dict):
 def render_chat_view(agent_executor):
     st.title("🚢 智能口岸异常诊断助手")
 
+    init_message = """ 
+
+    你好！我是**小宁**。请告诉我您的箱号、提单号或业务问题。
+
+    例如：
+    
+    帮我查一下箱号 NBCT1234567，提单号 BILL002。这票货明天能赶上“中远海运金牛座”吗？我很急，一直没放行。
+
+    查一下集装箱 TRLU1234567，提单号 BILL001。船名是“中远海运金牛座”。一切正常吗？
+
+    帮我查个不存在的箱子 ERROR999999，看看什么情况。
+    """
     # 初始化消息结构: {"role": str, "content": str, "metrics": dict/None}
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = [
             {
                 "role": "assistant",
-                "content": "你好！我是**小宁**。请告诉我您的箱号、提单号或业务问题。",
+                "content": init_message,
                 "metrics": None,
             }
         ]
@@ -151,9 +164,12 @@ def main():
     elif current_page == "🛠️ 数据配置":
         render_admin_panel()
 
+    elif current_page == "🔍 历史审计":
+        render_monitor_page()
+
 
 if __name__ == "__main__":
-    """ 
+    """
     uv run streamlit run src/web/app.py
 
     query:

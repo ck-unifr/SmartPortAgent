@@ -1,3 +1,4 @@
+# src/agent/agent_creator.py
 from datetime import datetime
 from typing import List
 from typing import List, Optional
@@ -63,7 +64,7 @@ SYSTEM_PROMPT_TEMPLATE = """
 
 
 class PortAgentFactory:
-    def __init__(self, temperature: float = 0.1):
+    def __init__(self, temperature: float = 0.01):
         self.temperature = temperature
         self.tools = self._load_tools()
         self.llm = self._init_llm()
