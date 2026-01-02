@@ -12,7 +12,8 @@ def render_sidebar():
         st.markdown("### 🧭 模式选择")
         page_mode = st.radio(
             "选择功能模块:",
-            ["💬 智能对话", "🛠️ 数据配置"],
+            # ["💬 智能对话", "🛠️ 数据配置"],
+            ["💬 智能对话", "🛠️ 数据配置", "🔍 历史审计"],
             index=0,
             label_visibility="collapsed",
         )
@@ -30,6 +31,7 @@ def render_sidebar():
             st.markdown("### 📚 系统状态")
             st.caption(f"LLM 引擎: `{settings.LLM_PROVIDER.upper()}`")
             st.success("✅ 知识库服务就绪")
+            pass
 
         # --- 版本信息 ---
         st.markdown("---")
