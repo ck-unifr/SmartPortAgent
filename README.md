@@ -7,7 +7,7 @@
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)](https://www.python.org/)
 [![uv](https://img.shields.io/badge/uv-fastest-purple?logo=python)](https://github.com/astral-sh/uv)
-[![LangChain](https://img.shields.io/badge/LangChain-v0.1-green?logo=chainlink)](https://www.langchain.com/)
+[![LangChain](https://img.shields.io/badge/LangChain-v0.3-green?logo=chainlink)](https://www.langchain.com/)
 [![License](https://img.shields.io/badge/License-MIT-grey)](LICENSE)
 
 [![ZhipuAI](https://img.shields.io/badge/ZhipuAI-GLM--4-blueviolet)](https://open.bigmodel.cn/)
@@ -38,7 +38,11 @@
 ## 📸 演示截图
 
 <!-- 方式 A: 标准 Markdown 语法 (无法调整大小) -->
-![SmartPortAgent Demo](docs/demo.png)
+![SmartPortAgent Demo](docs/demo1.png)
+![SmartPortAgent Demo](docs/demo2.png)
+![SmartPortAgent Demo](docs/demo3.png)
+![SmartPortAgent Demo](docs/demo4.png)
+![SmartPortAgent Demo](docs/demo5.png)
 
 <!-- 方式 B: HTML 语法 (推荐，可居中、调大小) -->
 <!-- <div align="center">
