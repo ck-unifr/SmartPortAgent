@@ -6,7 +6,6 @@ from typing import List
 from langchain_community.document_loaders import TextLoader
 from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
-from langchain_core.retrievers import BaseRetriever
 from langchain_core.tools import tool, BaseTool
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter, TextSplitter
