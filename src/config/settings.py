@@ -34,7 +34,7 @@ CHUNK_SIZE = 500  # 每个文档块的字符长度
 CHUNK_OVERLAP = 50  # 文档块之间的重叠字符数 (防止上下文丢失)
 
 # 3. 检索参数 (Retriever)
-SEARCH_K = 2  # 每次检索返回的最相关文档数量
+SEARCH_K = 5  # 每次检索返回的最相关文档数量
 
 # 4. 工具定义 (Tool)
 # Agent 使用这个名字和描述来决定何时调用此工具
@@ -68,8 +68,9 @@ ZHIPU_MODEL_NAME = "glm-4"
 # --- 2. 阿里通义千问 (Qwen) 配置 ---
 DASHSCOPE_API_KEY = os.getenv("DASHSCOPE_API_KEY")
 # 模型选项: "qwen-plus" (推荐), "qwen-max" (最强), "qwen-turbo" (最快/便宜)
-QWEN_MODEL_NAME = "qwen-turbo"
-# QWEN_MODEL_NAME = "qwen-plus"
+# QWEN_MODEL_NAME = "qwen-turbo"
+# QWEN_MODEL_NAME = "qwen-max"
+QWEN_MODEL_NAME = "qwen-plus"
 
 # --- 配置检查 (仅在直接运行此文件或初始化时提示) ---
 if __name__ != "__main__":
