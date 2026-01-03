@@ -6,24 +6,47 @@
       "vgm_status": "已发送",
       "location": "宁波北仑第二集装箱码头"
     },
-    "NBCT1234567": {
-      "container_id": "NBCT1234567",
+    "URGENT001": {
+      "container_id": "URGENT001",
       "status": "已进港",
       "vgm_status": "已发送",
       "location": "宁波北仑第三集装箱码头"
+    },
+    "RISK888888": {
+      "container_id": "RISK888888",
+      "status": "已进港",
+      "vgm_status": "已发送",
+      "location": "宁波北仑第三集装箱码头"
+    },
+    "NOVGM999": {
+      "container_id": "NOVGM999",
+      "status": "已进港",
+      "vgm_status": "未发送",
+      "location": "宁波北仑第四集装箱码头"
     }
   },
   "customs": {
     "BILL001": {
       "bill_of_lading": "BILL001",
       "customs_status": "放行",
-      "declaration_time": "2026-01-10 09:00:00"
+      "declaration_time": "2026-01-02 09:00:00"
     },
-    "BILL002": {
-      "bill_of_lading": "BILL002",
+    "BILL_URGENT": {
+      "bill_of_lading": "BILL_URGENT",
       "customs_status": "查验",
       "customs_code": "H98",
-      "instruction_time": "2026-01-15 11:30:00"
+      "instruction_time": "2026-01-04 10:30:00"
+    },
+    "BILL_RISK": {
+      "bill_of_lading": "BILL_RISK",
+      "customs_status": "查验",
+      "customs_code": "人工查验",
+      "instruction_time": "2026-01-03 09:00:00"
+    },
+    "BILL_NOVGM": {
+      "bill_of_lading": "BILL_NOVGM",
+      "customs_status": "放行",
+      "declaration_time": "2026-01-03 14:00:00"
     }
   },
   "vessels": {
@@ -32,6 +55,12 @@
       "voyage": "CSB001E",
       "estimated_berthing_time": "2026-01-16 08:00:00",
       "customs_clearance_deadline": "2026-01-16 14:00:00"
+    },
+    "东方海外宁波": {
+      "vessel_name": "东方海外宁波",
+      "voyage": "OOCL004W",
+      "estimated_berthing_time": "2026-01-05 08:00:00",
+      "customs_clearance_deadline": "2026-01-04 16:00:00"
     }
   }
 }
