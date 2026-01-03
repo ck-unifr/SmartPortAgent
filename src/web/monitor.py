@@ -1,5 +1,7 @@
+# src/web/monitor.py
 import streamlit as st
 import pandas as pd
+import time
 from src.database.repository import ChatLogRepository
 
 
@@ -7,11 +9,39 @@ def render_monitor_page():
     st.title("🛡️ 审计监控中心 (Audit Dashboard)")
     st.caption("实时监控 Agent 的对话历史、Token 消耗及工具调用链路。")
 
+    # --- 数据管理入口 ---
+    with st.expander("⚠️ 数据管理 (Data Management)", expanded=False):
+        st.markdown(
+            """
+            <div style="background-color:#fff4f4; padding:10px; border-radius:5px; border:1px solid #ffcccc;">
+                <strong style="color:red;">危险操作区：</strong> 
+                点击下方按钮将 <b>永久删除</b> 所有历史对话日志。此操作不可撤销。
+            </div>
+        """,
+            unsafe_allow_html=True,
+        )
+
+        # 使用列布局来控制按钮宽度
+        c_warn, c_btn = st.columns([3, 1])
+        with c_btn:
+            # key 用于区分其他按钮，type="primary" 通常显示为红色(取决于主题)
+            if st.button("🗑️ 确认清空数据库", type="primary", key="btn_clear_db"):
+                rows_deleted = ChatLogRepository.clear_logs()
+                if rows_deleted >= 0:
+                    st.toast(f"✅ 已成功清理 {rows_deleted} 条记录！", icon="🗑️")
+                    time.sleep(1.5)  # 给一点时间让用户看到提示
+                    st.rerun()  # 强制刷新页面
+                else:
+                    st.error("清空失败，请检查后台日志。")
+
+    st.caption("实时监控 Agent 的对话历史、Token 消耗及工具调用链路。")
+
     # 1. 数据获取
     logs = ChatLogRepository.get_recent_logs(limit=100)
 
     if not logs:
         st.info("📭 暂无审计日志数据。")
+        # 如果没有数据，直接返回，不再渲染下面的图表
         return
 
     # 2. 转换数据为 DataFrame 用于统计

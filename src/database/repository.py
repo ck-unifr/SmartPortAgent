@@ -56,3 +56,17 @@ class ChatLogRepository:
             return (
                 db.query(ChatLog).order_by(ChatLog.timestamp.desc()).limit(limit).all()
             )
+
+    @staticmethod
+    def clear_logs():
+        """清空所有审计日志"""
+        with get_db() as db:
+            try:
+                # 批量删除所有记录
+                num_deleted = db.query(ChatLog).delete()
+                db.commit()
+                return num_deleted
+            except Exception as e:
+                db.rollback()
+                print(f"❌ 清空数据库失败: {e}")
+                return 0

@@ -44,7 +44,13 @@ RETRIEVER_TOOL_DESCRIPTION = (
     "当你需要解释为什么会出现某种海关状态，或者该如何应对时，使用这个工具。"
 )
 
-VECTOR_STORE_PATH: Path = Path("data/vector_store_index") 
+VECTOR_STORE_PATH: Path = Path("data/vector_store_index")
+
+# 数据库路径
+DB_PATH = BASE_DIR / "data" / "port_agent.db"
+# 自动创建 data 目录（防止因目录不存在导致 SQLite 报错）
+if not os.path.exists(DB_PATH.parent):
+    os.makedirs(DB_PATH.parent, exist_ok=True)
 
 # =======================================================
 # --- 大模型 (LLM) 配置 ---
