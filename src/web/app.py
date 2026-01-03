@@ -23,7 +23,6 @@ from langchain_community.callbacks import StreamlitCallbackHandler
 
 
 INIT_MESSAGE = """ 
-
 你好！我是**小宁**。请告诉我您的箱号、提单号或业务问题。\n
 例如：\n
 帮我查一下箱号 TRLU1234567 和提单号 BILL001。这票货是配‘中远海运金牛座’的，状态正常吗？\n
