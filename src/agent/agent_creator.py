@@ -118,7 +118,7 @@ class PortAgentFactory:
             verbose=verbose,
             callbacks=callbacks,  # ✅  将监控回调注入到执行器
             handle_parsing_errors=True,
-            max_iterations=2,
+            max_iterations=5,
         )
 
 
