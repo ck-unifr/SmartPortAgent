@@ -246,10 +246,6 @@ uv run main_cli.py
 - 项目中的所有数据（箱号、船期、状态）均为 **模拟数据** (`data/mock_api_data.json`)。
 - 本项目未连接任何真实的港口或海关生产系统。
 
-## 📄 License
-
-MIT License © 2024 SmartPortAgent Team
-
 ---
 
 <div align="center">
